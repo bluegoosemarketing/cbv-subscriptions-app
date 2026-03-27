@@ -7,8 +7,7 @@ const requiredVars = [
   'SHOPIFY_API_SECRET',
   'SHOPIFY_SHARED_SECRET',
   'SHOP_DOMAIN',
-  'RECHARGE_API_KEY',
-  'RECHARGE_STORE_HASH'
+  'RECHARGE_API_KEY'
 ];
 
 const missing = requiredVars.filter((key) => !process.env[key]);
@@ -25,6 +24,5 @@ export const env = {
   shopifySharedSecret: process.env.SHOPIFY_SHARED_SECRET,
   shopDomain: process.env.SHOP_DOMAIN,
   rechargeApiKey: process.env.RECHARGE_API_KEY,
-  rechargeStoreHash: process.env.RECHARGE_STORE_HASH,
   rechargeApiVersion: process.env.RECHARGE_API_VERSION ?? '2021-11'
 };
