@@ -13,7 +13,7 @@ Response:
       "id": "123456789",
       "customer_id": 111222333,
       "type": "candle",
-      "status": "ACTIVE",
+      "status": "active",
       "product_title": "Example Product",
       "variant_title": "8 oz",
       "quantity": 1,
@@ -48,7 +48,16 @@ Response:
 
 Response:
 
-- Same item shape as objects inside list `items`.
+```json
+{
+  "item": {
+    "id": "123456789",
+    "status": "active"
+  }
+}
+```
+
+- `item` has the same shape as objects inside list `items`.
 
 ## Update one item
 

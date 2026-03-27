@@ -58,7 +58,7 @@ itemsRouter.get('/:id', async (req, res, next) => {
       itemId: id
     });
 
-    return res.json(result.item);
+    return res.json({ item: result.item });
   } catch (error) {
     return next(error);
   }
