@@ -51,12 +51,15 @@ function detectItemType(subscription) {
 
 function toThemeContractItem(subscription) {
   const properties = mapPropertiesArrayToObject(subscription.properties);
+  const normalizedStatus = subscription.status == null
+    ? null
+    : String(subscription.status).toLowerCase();
 
   return {
     id: String(subscription.id),
     customer_id: subscription.customer_id,
     type: detectItemType(subscription),
-    status: subscription.status ?? null,
+    status: normalizedStatus,
     product_title: subscription.product_title ?? null,
     variant_title: subscription.variant_title ?? null,
     quantity: subscription.quantity ?? null,
