@@ -11,7 +11,7 @@ This service is intended to sit behind Shopify App Proxy routes and provide back
 
 - Lightweight Express server
 - App Proxy signature verification middleware for Shopify requests
-- Required placeholder routes:
+- Recharge-backed app proxy routes:
   - `GET /apps/cbv-subscriptions/items`
   - `GET /apps/cbv-subscriptions/items/:id?type=<candle|wax-melt>`
   - `POST /apps/cbv-subscriptions/items/:id`
@@ -95,14 +95,24 @@ will be forwarded to this backend and include signed query parameters for verifi
 
 ## 5) Route map
 
-All routes are protected with app proxy signature verification middleware:
+All routes are protected with app proxy signature verification middleware and require `logged_in_customer_id` from the signed Shopify app proxy query:
 
 - `GET /apps/cbv-subscriptions/items`
-  - Placeholder: returns empty `items` array
+  - Resolves the Recharge customer linked to `logged_in_customer_id` and returns real subscription items.
 - `GET /apps/cbv-subscriptions/items/:id?type=<candle|wax-melt>`
-  - Placeholder: validates `type` if provided
+  - Verifies ownership, applies optional `type` filter, and returns one real subscription item.
 - `POST /apps/cbv-subscriptions/items/:id`
-  - Placeholder: echoes payload
+  - Verifies ownership, validates payload, updates Recharge subscription properties, and returns updated item JSON.
+
+Allowed update keys:
+
+- `scent_1`
+- `scent_family`
+- `wax_color`
+- `vessel`
+- `vessel_format`
+- `wick_upgrade`
+- dynamic key pattern: `secondary_*`
 
 ## 6) Deployment notes
 
@@ -112,9 +122,23 @@ All routes are protected with app proxy signature verification middleware:
 - Keep one canonical public domain and point Shopify app proxy URL to it
 - If running behind a load balancer, ensure request query parameters are forwarded unchanged
 
-## 7) Next implementation steps
+## 7) Recharge integration details
 
-- Add Recharge client module and data mapping for CBV theme payload shape
-- Add request logging/monitoring and structured logs
+This backend uses Recharge API with:
+
+- Header `X-Recharge-Access-Token: $RECHARGE_API_KEY`
+- Header `X-Recharge-Version: $RECHARGE_API_VERSION`
+- Base URL `https://api.rechargeapps.com`
+
+Endpoints used:
+
+- `GET /customers?external_customer_id=<shopify_customer_id>`
+- Fallback: `GET /customers?shopify_customer_id=<shopify_customer_id>`
+- `GET /subscriptions?customer_id=<recharge_customer_id>`
+- `GET /subscriptions/:id`
+- `PUT /subscriptions/:id` (with merged `properties` payload)
+
+## 8) Next implementation steps
+
 - Add integration tests for signature validation and route behavior
 - Add rate limiting if needed once traffic patterns are known
