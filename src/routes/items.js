@@ -10,7 +10,7 @@ import {
 export const itemsRouter = Router();
 
 function getShopifyCustomerIdOrThrow(req) {
-  const customerId = req.query.logged_in_customer_id;
+  const customerId = req.query.logged_in_customer_id || req.query.customer_id;
 
   if (!customerId) {
     throw new HttpError(401, 'Shopify logged in customer context is required.');
